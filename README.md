@@ -1,33 +1,62 @@
-<img src="https://github.com/seata/seata-samples/blob/master/doc/img/seata.png"  height="100" width="426">
+# 快速开始
 
-# Seata Samples
+这是一个 Seata +  Spring Boot 分布式事务示例。
 
-Samples for Seata. This project contains several sub-projects, each of which is an example of integration with other projects.
-                                
-[![Build Status](https://travis-ci.org/seata/seata-samples.svg?branch=master)](https://travis-ci.org/seata/seata-samples) 
-![license](https://img.shields.io/github/license/seata/seata-samples.svg)
+## 环境
 
-## Related repository
+* Seata 1.4
+* Spring Boot 2.3.5.RELEASE
+* 其它版本如果遇到兼容性问题，查看[部署指南](https://seata.io/zh-cn/docs/ops/deploy-guide-beginner.html)
 
-* [Seata](https://github.com/seata/seata) - The Seata core project
+## 步骤
 
-## Sub-projects
+* 下载 [seata](http://seata.io/zh-cn/blog/download.html) 并启动 ```sh seata-server.sh```
+* 执行 db.sql
+* 修改 application.properties 中的数据库配置
+* 分别启动 4 个服务 ``` mvn spring-boot:run```
 
-* [spring-cloud-alibaba-samples](https://github.com/seata/seata-samples/tree/master/spring-cloud-alibaba-samples) - Spring Cloud Alibaba + Nacos + Dubbo + OpenFeign + Sentinel + Seata 
-* [dubbo](https://github.com/seata/seata-samples/tree/master/dubbo) - Integration example of [Seata](https://github.com/seata/seata) and [Apache Dubbo](https://github.com/apache/dubbo)
-* [springboot](https://github.com/seata/seata-samples/tree/master/springboot) - Integration example of [Seata](https://github.com/seata/seata) and [Spring Boot](https://github.com/spring-projects/spring-boot/) 
-* [nacos](https://github.com/seata/seata-samples/tree/master/nacos) - Integration example of [Seata](https://github.com/alibaba/fescar)、 [Apache Dubbo](https://github.com/apache/dubbo) and [Alibaba Nacos](https://github.com/alibaba/nacos/) 
-* [springboot-dubbo-seata](https://github.com/seata/seata-samples/tree/master/springboot-dubbo-seata) - Integration example of [Seata](https://github.com/seata/seata)、 [Apache Dubbo](https://github.com/apache/dubbo) and [Spring Boot](https://github.com/spring-projects/spring-boot/) 
-* [nutzboot-dubbo-seata](https://github.com/seata/seata-samples/tree/master/nutzboot-dubbo-fescar) - Integration example of [Seata](https://github.com/seata/seata)、 [Apache Dubbo](https://github.com/apache/dubbo) and [NutzBoot](https://github.com/nutzam/nutzboot/) 
-* [springcloud-jpa-seata](https://github.com/seata/seata-samples/tree/master/springcloud-jpa-seata) - Integration example of [Seata](https://github.com/Seata) and [Spring Cloud](https://github.com/spring-cloud) and JPA
-* [spring-boot-multiple-datasource](./multiple-datasource) - Integration example of [Seata](https://github.com/Seata) and [Spring Boot](https://github.com/spring-projects/spring-boot/) with multiple datasource and MyBatis
-* [springboot-mybatis](https://github.com/seata/seata-samples/tree/master/springboot-mybatis) - Integration example of [Seata](https://github.com/Seata) and [Spring Boot](https://github.com/spring-projects/spring-boot/) and [Mybatis](https://github.com/mybatis/mybatis-3) 
-* [api](https://github.com/seata/seata-samples/tree/master/api) - Non-Spring environment uses api to build Seata distributed transactions
-* [spring-boot-multiple-datasource-mybatis-plus](./multiple-datasource-mybatis-plus) - Integration example of [Seata](https://github.com/Seata) and [Spring Boot](https://github.com/spring-projects/spring-boot/) with multiple datasource and [MyBatisPlus](https://github.com/baomidou/mybatis-plus)
-* [springcloud-nacos-seata](https://github.com/seata/seata-samples/tree/master/springcloud-nacos-seata) - Integration example of [Seata](https://github.com/Seata) and [Spring Cloud](https://github.com/spring-cloud) and [Alibaba Nacos](https://github.com/alibaba/nacos/)
-* [saga](https://github.com/seata/seata-samples/tree/master/saga) - Saga mode distributed transaction demo projects
-* [dubbo-multiple-datasource-mybatis-plus](https://github.com/seata/seata-samples/tree/master/dubbo-multiple-datasource-mybatis-plus) - Integration example of [Seata](https://github.com/Seata) and [Spring Boot](https://github.com/spring-projects/spring-boot/)  - [Apache Dubbo](https://github.com/apache/dubbo) with [dynamic](https://github.com/baomidou/dynamic-datasource-spring-boot-starter) multiple datasource and [MyBatisPlus](https://github.com/baomidou/mybatis-plus) and [Alibaba Nacos](https://github.com/alibaba/nacos/)
+## 测试
 
-## Guide 
+#### 用例说明：
 
-- [Quick integration with Spring Cloud](./doc/quick-integration-with-spring-cloud.md)
+执行 commit 接口，1001 用户在 account 中 money -5，在 order 订单中增加一条消费记录；在 storage 库存中减一。
+
+执行 rollback 接口，1002 用户在执行过程中触发一个异常，整个事务回滚。
+
+#### 成功场景:
+
+  ```sh
+# curl -X POST http://127.0.0.1:8084/api/business/purchase/commit
+  ```
+
+此时返回结果为：true，看后台日志 commit， account.money 减少 5，order 增加 1 条记录。
+
+#### 失败场景:
+
+ UserId 为 1002  的用户下单，sbm-account-service 会抛出异常，事务会回滚
+
+  ```sh
+# curl -X POST http://127.0.0.1:8084/api/business/purchase/rollback
+  ```
+
+此时返回结果为：false，看后台日志 rollback。
+
+``` java
+public void debit(String userId , BigDecimal num) {
+    Account account = accountMapper.selectByUserId(userId);
+    account.setMoney(account.getMoney().subtract(num));
+    accountMapper.updateById(account);
+
+    //这里故意为 1002 抛了个异常
+    if (ERROR_USER_ID.equals(userId)) {
+        throw new RuntimeException("account branch exception");
+    }
+}
+```
+
+
+
+
+
+
+
