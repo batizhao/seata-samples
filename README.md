@@ -79,7 +79,7 @@ business to storage 10.6.84.151:8091:77049541928423424
 
 触发异常的代码：
 
-``` java
+```java
 public void debit(String userId , BigDecimal num) {
     Account account = accountMapper.selectByUserId(userId);
     account.setMoney(account.getMoney().subtract(num));
