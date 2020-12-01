@@ -30,9 +30,19 @@
 
 #### 用例说明：
 
-执行 commit 接口，1001 用户在 account 中 money -5，在 order 订单中增加一条消费记录；在 storage 库存中减一。
+执行 commit 接口：
 
-执行 rollback 接口，1002 用户在执行过程中触发一个异常，整个事务回滚。
+* 1001 用户在 account 中 money 减 5；
+* 在 order 系统，订单中增加一条消费记录；
+* 在 storage 系统，库存中减 1。
+
+执行 rollback 接口，
+
+* 1002 用户在执行过程中主动触发一个异常；
+* 整个事务回滚。
+* 没有产生任何脏数据。
+
+> 可以去掉 BusinessService 中的 @GlobalTransactional 测试一下没有全局分布式事务的情况。
 
 #### 成功场景:
 
@@ -40,7 +50,14 @@
 # curl -X POST http://127.0.0.1:8084/api/business/purchase/commit
   ```
 
-此时返回结果为：true，看后台日志 commit， account.money 减少 5，order 增加 1 条记录。
+此时返回结果为：true，看后台日志 commit。
+
+```shell 
+2020-12-01 14:46:23,899  INFO [http-nio-8084-exec-3] i.s.tm.api.DefaultGlobalTransaction [DefaultGlobalTransaction.java : 109] Begin new global transaction [10.6.84.151:8091:77049296939126784]
+2020-12-01 14:46:23,899  INFO [http-nio-8084-exec-3] i.s.s.b.service.BusinessService [BusinessService.java : 31] purchase begin ... xid: 10.6.84.151:8091:77049296939126784
+business to storage 10.6.84.151:8091:77049296939126784
+2020-12-01 14:46:27,284  INFO [http-nio-8084-exec-3] i.s.tm.api.DefaultGlobalTransaction [DefaultGlobalTransaction.java : 143] [10.6.84.151:8091:77049296939126784] commit status: Committed
+```
 
 #### 失败场景:
 
@@ -51,6 +68,16 @@
   ```
 
 此时返回结果为：false，看后台日志 rollback。
+
+```shell 
+2020-12-01 14:47:22,308  INFO [http-nio-8084-exec-4] i.s.tm.api.DefaultGlobalTransaction [DefaultGlobalTransaction.java : 109] Begin new global transaction [10.6.84.151:8091:77049541928423424]
+2020-12-01 14:47:22,308  INFO [http-nio-8084-exec-4] i.s.s.b.service.BusinessService [BusinessService.java : 31] purchase begin ... xid: 10.6.84.151:8091:77049541928423424
+business to storage 10.6.84.151:8091:77049541928423424
+2020-12-01 14:47:22,534 ERROR [http-nio-8084-exec-4] i.s.s.business.client.OrderClient [OrderClient.java : 20] create url http://127.0.0.1:8082/api/order/debit?userId=1002&commodityCode=2001&count=1 ,error:
+2020-12-01 14:47:22,709  INFO [http-nio-8084-exec-4] i.s.tm.api.DefaultGlobalTransaction [DefaultGlobalTransaction.java : 178] [10.6.84.151:8091:77049541928423424] rollback status: Rollbacked
+```
+
+触发异常的代码：
 
 ``` java
 public void debit(String userId , BigDecimal num) {
