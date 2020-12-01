@@ -11,8 +11,15 @@
 ## 步骤
 
 * 下载 [seata](http://seata.io/zh-cn/blog/download.html) 并启动 ```sh seata-server.sh```
-* 执行 db.sql
-* 修改 application.properties 中的数据库配置
+
+* 执行 db.sql，因为 teleDB 测试库只能建表不能建库，所以这里 3 张业务表都放在一个库里，效果和分库是一样的。
+
+  > 实际使用中，每个库都要有  undo_log 表。这里共用一张  undo_log 表。
+  >
+  > 生产环境还要考虑 Seata 的 HA
+
+* 修改 application. yml 库配置
+
 * 分别启动 4 个服务 ``` mvn spring-boot:run```
 
 ## 测试
