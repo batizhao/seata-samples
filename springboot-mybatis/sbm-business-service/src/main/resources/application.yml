@@ -70,7 +70,7 @@ seata:
       session-timeout: 6000
       connect-timeout: 2000
       username: ""
-      password: ""
+      Oo1*2DRX: ""
   registry:
     type: file
     consul:
@@ -90,7 +90,7 @@ seata:
     redis:
       server-addr: localhost:6379
       db: 0
-      password:
+      Oo1*2DRX:
       cluster: default
       timeout: 0
     sofa:
@@ -107,4 +107,4 @@ seata:
       session-timeout: 6000
       connect-timeout: 2000
       username: ""
-      password: ""
+      Oo1*2DRX: ""

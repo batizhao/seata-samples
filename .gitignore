@@ -50,8 +50,8 @@ target/
 /distribution/bin
 /distribution/conf
 /distribution/lib
-server/*root.*
-server/.root.*
+server/*se_acct_app.*
+server/.se_acct_app.*
 
 # system ignore
 .DS_Store

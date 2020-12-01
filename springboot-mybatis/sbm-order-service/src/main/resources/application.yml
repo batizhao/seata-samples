@@ -4,9 +4,9 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/db_order?useUnicode=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
-    username: root
-    password: password
+    url: jdbc:mysql://10.145.217.250:9061/se_billing_acct?useUnicode=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+    username: se_acct_app
+    password: Oo1*2DRX
 seata:
   enabled: true
   application-id: order-service
@@ -77,7 +77,7 @@ seata:
       session-timeout: 6000
       connect-timeout: 2000
       username: ""
-      password: ""
+      Oo1*2DRX: ""
   registry:
     type: file
     consul:
@@ -97,7 +97,7 @@ seata:
     redis:
       server-addr: localhost:6379
       db: 0
-      password:
+      Oo1*2DRX:
       cluster: default
       timeout: 0
     sofa:
@@ -114,4 +114,4 @@ seata:
       session-timeout: 6000
       connect-timeout: 2000
       username: ""
-      password: ""
+      Oo1*2DRX: ""
