@@ -8,15 +8,19 @@
 * Spring Boot 2.3.5.RELEASE
 * 其它版本如果遇到兼容性问题，查看[部署指南](https://seata.io/zh-cn/docs/ops/deploy-guide-beginner.html)
 
+## 架构图
+
+![](https://seata.io/img/architecture.png)
+
 ## 步骤
 
 * 下载 [seata](http://seata.io/zh-cn/blog/download.html) 并启动 ```sh seata-server.sh```
 
 * 执行 db.sql，因为 teleDB 测试库只能建表不能建库，所以这里 3 张业务表都放在一个库里，效果和分库是一样的。
 
-  > 实际使用中，每个库都要有  undo_log 表。这里共用一张  undo_log 表。
+  > 实际使用中，每个业务库都要有  undo_log 表。这里共用一张  undo_log 表。
   >
-  > 生产环境还要考虑 Seata 的 HA
+  > 生产环境还要考虑 Seata 的 HA，这里使用最简单的本地 file 模式。
 
 * 修改 application. yml 库配置
 
