@@ -53,58 +53,5 @@ seata:
     enable-client-batch-send-request: true
   config:
     type: file
-    consul:
-      server-addr: 127.0.0.1:8500
-    apollo:
-      apollo-meta: http://192.168.1.204:8801
-      app-id: seata-server
-      namespace: application
-    etcd3:
-      server-addr: http://localhost:2379
-    nacos:
-      namespace:
-      serverAddr: localhost
-      group: SEATA_GROUP
-    zk:
-      server-addr: 127.0.0.1:2181
-      session-timeout: 6000
-      connect-timeout: 2000
-      username: ""
-      Oo1*2DRX: ""
   registry:
     type: file
-    consul:
-      cluster: default
-      server-addr: 127.0.0.1:8500
-    etcd3:
-      cluster: default
-      serverAddr: http://localhost:2379
-    eureka:
-      application: default
-      weight: 1
-      service-url: http://localhost:8761/eureka
-    nacos:
-      cluster: default
-      server-addr: localhost
-      namespace:
-    redis:
-      server-addr: localhost:6379
-      db: 0
-      Oo1*2DRX:
-      cluster: default
-      timeout: 0
-    sofa:
-      server-addr: 127.0.0.1:9603
-      application: default
-      region: DEFAULT_ZONE
-      datacenter: DefaultDataCenter
-      cluster: default
-      group: SEATA_GROUP
-      addressWaitTime: 3000
-    zk:
-      cluster: default
-      server-addr: 127.0.0.1:2181
-      session-timeout: 6000
-      connect-timeout: 2000
-      username: ""
-      Oo1*2DRX: ""

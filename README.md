@@ -16,7 +16,7 @@
 
 * 下载 [seata](http://seata.io/zh-cn/blog/download.html) 并启动 ```sh seata-server.sh```
 
-* 执行 db.sql，因为 teleDB 测试库只能建表不能建库，所以这里 3 张业务表都放在一个库里，效果和分库是一样的。
+* 执行 db.sql
 
   > 实际使用中，每个业务库都要有  undo_log 表。这里共用一张  undo_log 表。
   >
